@@ -5,6 +5,7 @@ import time
 import datetime
 from flask import Flask
 import threading
+import uuid
 
 from ctftime_client import filter_fetched_events, more_about_event
 
@@ -68,7 +69,7 @@ async def on_reaction_add(reaction, user):
 
         embed = reaction.message.embeds[0] if reaction.message.embeds else None
 
-        thread_name = f'custom-thread-by-{message.author}'
+        thread_name = f'custom-thread-by-{message.author}#{uuid.uuid4()}'
         if  embed and embed.title:
             thread_name = embed.title
 
