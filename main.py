@@ -18,39 +18,39 @@ async def send_messages():
     await client.wait_until_ready()  
     channel = client.get_channel(CHANNEL_ID)
 
-    if channel:
-        while not client.is_closed():
-            # try:
-                events = filter_fetched_events()
+    if not channel:
+        return
 
-                for event in events:
-                    more_event_info = more_about_event(event['id'])
-                    
-                    if more_event_info['prizes'] != "":
-                        prizes =  f"\n\n**Prizes:** \n{more_event_info['prizes']}" 
-                    else:
-                        prizes = ""
+    while not client.is_closed():
+        try:
+            events = filter_fetched_events()
 
-                    embed = discord.Embed(
-                        title=f"📌 {event['title']}",
-                        description=f"**Description:**\n"
-                            f"{more_event_info['description']}"
-                            f"{prizes}"
-                            f"\n\n**React with 🔥 if you would like play**\n\n"
-                            f"🕒 **Start:** {format_timestamp(event['start'])}\n"
-                            f"⏳ **End:** {format_timestamp(event['finish'])}\n\n"
-                            f"🔗 [Event Link]({event['url']})",
-                        color=discord.Color.green()
-                    )
+            for event in events:
+                more_event_info = more_about_event(event['id'])
+                prizes = ""
+                if more_event_info['prizes'] != "":
+                    prizes =  f"\n\n**Prizes:** \n{more_event_info['prizes']}" 
 
-                    embed.set_image(url=more_event_info['logo'])
+                embed = discord.Embed(
+                    title=f"📌 {event['title']}",
+                    description=f"**Description:**\n"
+                        f"{more_event_info['description']}"
+                        f"{prizes}"
+                        f"\n\n**React with 🔥 if you would like play**\n\n"
+                        f"🕒 **Start:** {format_timestamp(event['start'])}\n"
+                        f"⏳ **End:** {format_timestamp(event['finish'])}\n\n"
+                        f"🔗 [Event Link]({event['url']})",
+                    color=discord.Color.green()
+                )
 
-                    await channel.send(embed=embed)
+                embed.set_image(url=more_event_info['logo'])
 
-                await asyncio.sleep(FETCH_NEW_EVENTS_AFTER_DURATION) 
-            # except Exception as e:
-            #     print(e)
-            #     await asyncio.sleep(FETCH_NEW_EVENTS_AFTER_DURATION//24)
+                await channel.send(embed=embed)
+
+            await asyncio.sleep(FETCH_NEW_EVENTS_AFTER_DURATION) 
+        except Exception as e:
+            print(e)
+            await asyncio.sleep(FETCH_NEW_EVENTS_AFTER_DURATION//24)
 
 
 @client.event
@@ -62,6 +62,9 @@ async def on_reaction_add(reaction, user):
     if reaction.emoji == "🔥": 
         message = reaction.message
         channel = message.channel
+
+        if channel.id != CHANNEL_ID:
+            return
 
         embed = reaction.message.embeds[0] if reaction.message.embeds else None
 
@@ -85,13 +88,14 @@ async def on_ready():
     client.loop.create_task(send_messages())
 
 
-
 # Create a Flask web server 
 app = Flask(__name__)
+
 
 @app.route("/")
 def home():
     return "Bot is running!"
+
 
 def run_flask():
     """ Runs the Flask server to keep the bot alive. """
