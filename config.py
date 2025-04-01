@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 
 def __initialize_discord_bot():
-
     intents = discord.Intents.default()
     intents.messages = True  
     intents.guilds = True

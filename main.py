@@ -3,6 +3,8 @@ import asyncio
 import os
 import time
 import datetime
+from flask import Flask
+import threading
 
 from ctftime_client import filter_fetched_events, more_about_event
 
@@ -83,5 +85,20 @@ async def on_ready():
     client.loop.create_task(send_messages())
 
 
+
+# Create a Flask web server 
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Bot is running!"
+
+def run_flask():
+    """ Runs the Flask server to keep the bot alive. """
+    app.run(host="0.0.0.0", port=8080)
+
+
 if __name__ == '__main__':
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
     client.run(TOKEN)
