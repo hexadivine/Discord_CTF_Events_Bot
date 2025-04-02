@@ -1,8 +1,5 @@
 import discord
 import asyncio
-import os
-import time
-import datetime
 from flask import Flask
 import threading
 import uuid

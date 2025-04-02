@@ -3,7 +3,7 @@ import json
 import time
 from datetime import datetime, timedelta
 
-from utils import str_to_syd_time, str_to_timestamp
+from utils import str_to_timestamp
 
 from config import FETCH_OFFSET_DAYS
 
