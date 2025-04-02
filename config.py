@@ -15,9 +15,9 @@ def __initialize_discord_bot():
 
 CLIENT = __initialize_discord_bot()
 
-THREAD_ARCHIVE_DURATION = 7*24*60*60        # After 7 days
-FETCH_OFFSET_DAYS = 5                       # After 5 days
-FETCH_NEW_EVENTS_AFTER_DURATION = 3*60*60   # Every 3 hrs
+THREAD_ARCHIVE_DURATION = 7*24*60*60
+FETCH_OFFSET_DAYS = 5
+FETCH_NEW_EVENTS_AFTER_DURATION = 24*60*60
 
 load_dotenv()
 
