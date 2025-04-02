@@ -66,7 +66,7 @@ async def on_reaction_add(reaction, user):
 
         embed = reaction.message.embeds[0] if reaction.message.embeds else None
 
-        thread_name = f'custom-thread-by-{message.author}#{uuid.uuid4()}'
+        thread_name = f'custom-thread{message.author}#{uuid.uuid4()[0:4]}'
         if  embed and embed.title:
             thread_name = embed.title
 
