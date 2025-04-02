@@ -37,8 +37,8 @@ async def send_messages():
                         f"\n\n**React with 🔥 if you would like play**\n\n"
                         f"🕒 **Start:** {format_timestamp(event['start'])}\n"
                         f"⏳ **End:** {format_timestamp(event['finish'])}\n\n"
-                        f"🔗 [Event Link]({event['url']})",
-                        f"|| Made with ♥️ by [hexadivine](https://hexadivine.vercel.app/) ||"
+                        f"🔗 [Event Link]({event['url']})"
+                        f"|| Made with ♥️ by [hexadivine](https://hexadivine.vercel.app/) ||",
                     color=discord.Color.green()
                 )
 
