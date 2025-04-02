@@ -6,7 +6,7 @@ import uuid
 
 from ctftime_client import filter_fetched_events, more_about_event
 
-from config import TOKEN, THREAD_ARCHIVE_DURATION, CHANNEL_ID, FETCH_NEW_EVENTS_AFTER_DURATION
+from config import TOKEN, FETCH_OFFSET_DAYS, CHANNEL_ID, FETCH_NEW_EVENTS_AFTER_DURATION
 from config import CLIENT as client
 
 from utils import format_timestamp
@@ -70,14 +70,13 @@ async def on_reaction_add(reaction, user):
         if  embed and embed.title:
             thread_name = embed.title
 
-        thread = await message.create_thread(name=thread_name, auto_archive_duration=THREAD_ARCHIVE_DURATION/60)
-        
-        await thread.send(f"Thread will auto-close in {THREAD_ARCHIVE_DURATION//(24*60*60)} Days")
+        thread = await message.create_thread(name=thread_name)
+
+        await thread.send(f"A thread has been created for discussion for this CTF.")
 
         # Auto-close thread after some time
-        await asyncio.sleep(THREAD_ARCHIVE_DURATION)
-        await thread.edit(archived=True)
-        await channel.send(f"{thread.name} Thread has been archived! 💤")
+        await asyncio.sleep(FETCH_OFFSET_DAYS*23*60*60)
+        await thread.send(f"CTF will start soon...")
 
 
 @client.event
