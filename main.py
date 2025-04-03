@@ -60,6 +60,8 @@ class JoinEventView(View):
                 players += f"<@{user_id}>, "
             await thread.send(f"{players[:-2]} CTF will start soon...", )
 
+            await asyncio.sleep(FETCH_OFFSET_DAYS*24*60*60)
+            del self
 
 
     @discord.ui.button(label="Show players", style=discord.ButtonStyle.green)
