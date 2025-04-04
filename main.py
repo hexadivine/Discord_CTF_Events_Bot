@@ -4,7 +4,7 @@ from flask import Flask
 import threading
 import uuid
 
-from ctftime_client import filter_fetched_events, more_about_event
+from ctftime_client import initial_run_filter_fetched_events, filter_fetched_events, more_about_event
 
 from config import TOKEN, FETCH_OFFSET_DAYS, CHANNEL_ID, FETCH_NEW_EVENTS_AFTER_DURATION
 from config import CLIENT as client
@@ -76,8 +76,9 @@ class JoinEventView(View):
             await interaction.response.send_message(f"Be the first to join this event", ephemeral=True)
 
 
-
+initial_run = True
 async def send_messages():
+    global initial_run
     await client.wait_until_ready()  
     channel = client.get_channel(CHANNEL_ID)
 
@@ -86,8 +87,14 @@ async def send_messages():
 
     while not client.is_closed():
         try:
-            events = filter_fetched_events()
-            print(events)
+            events = []
+            if initial_run:
+               print('yes')
+               events = initial_run_filter_fetched_events()
+               initial_run = False
+            else:
+                events = filter_fetched_events()
+
             for event in events:
                 more_event_info = more_about_event(event['id'])
                 prizes = ""
@@ -107,6 +114,8 @@ async def send_messages():
                     color=discord.Color.green()
                 )
                 view = JoinEventView() 
+
+                embed.set_image(url=more_event_info['logo'])
                 message = await channel.send(embed=embed, view=view)
                 view.message = message 
 
