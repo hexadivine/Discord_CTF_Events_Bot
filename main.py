@@ -3,13 +3,14 @@ import asyncio
 from flask import Flask
 import threading
 import uuid
+from datetime import datetime, timezone
 
 from ctftime_client import initial_run_filter_fetched_events, filter_fetched_events, more_about_event
 
 from config import TOKEN, FETCH_OFFSET_DAYS, CHANNEL_ID, FETCH_NEW_EVENTS_AFTER_DURATION
 from config import CLIENT as client
 
-from utils import format_timestamp
+from utils import format_timestamp, utc_to_syd_time
 
 from discord.ui import View, Button
 import random
@@ -51,16 +52,22 @@ class JoinEventView(View):
             thread = await self.message.create_thread(name=thread_name)
             await thread.send(f"A thread has been created for this CTF.")
             await thread.send(f'<@{user.id}> added to this thread.')
+    
+            now_utc = datetime.now(timezone.utc)
+            syd_start_datetime = utc_to_syd_time(self.event['start']) 
+            current_syd_time = utc_to_syd_time(now_utc.isoformat())
+            delay_seconds = int((syd_start_datetime - current_syd_time).total_seconds()) - 60*60
 
-            # await asyncio.sleep(3)
-            await asyncio.sleep(FETCH_OFFSET_DAYS*23*60*60)
+            delay_seconds = max(delay_seconds, 0)
+
+            await asyncio.sleep(delay_seconds)
 
             players = ""
-            for user_id in self.clicked_users:
-                players += f"<@{user_id}>, "
-            await thread.send(f"{players[:-2]} CTF will start soon...", )
+            for user in self.clicked_users:
+                players += f"<@{user.id}>, "
+            await thread.send(f"{players[:-2]} CTF will start in 1 hour...", )
 
-            await asyncio.sleep(FETCH_OFFSET_DAYS*24*60*60)
+            await asyncio.sleep(10*24*60*60)
             del self
 
 
@@ -71,7 +78,7 @@ class JoinEventView(View):
             players += f"<@{user.id}>, "
 
         if players != "":
-            await interaction.response.send_message(f"Below {len(self.clicked_users)} player{'s' if len(self.clicked_users) > 1 else ''} will participate...\n{players[:-2]}", ephemeral=True)
+            await interaction.response.send_message(f"Below {len(self.clicked_users)} player{'s' if len(self.clicked_users) > 1 else ''} will participate...\n\n{players[:-2]}", ephemeral=True)
         else:
             await interaction.response.send_message(f"Be the first to join this event", ephemeral=True)
 

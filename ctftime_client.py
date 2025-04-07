@@ -31,8 +31,8 @@ def filter_fetched_events(offset=FETCH_OFFSET_DAYS):
     for event in events:
         event_unix_time = str_to_timestamp(event['start'])
         if (event_unix_time < finish_time_unix):
-            filtered_events.append({'id':event['id'], 'title':event['title'], 'start':event['start'], 'finish': event['finish'] ,'url':event['url'] })
-    
+            filtered_events.append({'id':event['id'], 'title':event['title'], 'start':event['start'], 'finish': event['finish'] ,'url':event['url']})
+
     return filtered_events
 
 
