@@ -16,10 +16,11 @@ from discord.ui import View, Button
 import random
 
 class JoinEventView(View):
-    def __init__(self):
+    def __init__(self, event):
         super().__init__(timeout=None) 
         self.message = None
         self.clicked_users = set()
+        self.event = event
 
     @discord.ui.button(label="I'll play", style=discord.ButtonStyle.green)
     async def join_event(self, interaction: discord.Interaction, button: Button):
@@ -60,12 +61,13 @@ class JoinEventView(View):
 
             delay_seconds = max(delay_seconds, 0)
 
-            await asyncio.sleep(delay_seconds)
+            if (delay_seconds > 0):
+                await asyncio.sleep(delay_seconds)
 
-            players = ""
-            for user in self.clicked_users:
-                players += f"<@{user.id}>, "
-            await thread.send(f"{players[:-2]} CTF will start in 1 hour...", )
+                players = ""
+                for user in self.clicked_users:
+                    players += f"<@{user.id}>, "
+                await thread.send(f"{players[:-2]} CTF will start in 1 hour...", )
 
             await asyncio.sleep(10*24*60*60)
             del self
@@ -120,7 +122,7 @@ async def send_messages():
                         f"|| Made with ♥️ by [hexadivine](https://hexadivine.vercel.app/) ||",
                     color=discord.Color.green()
                 )
-                view = JoinEventView() 
+                view = JoinEventView(event) 
 
                 embed.set_image(url=more_event_info['logo'])
                 message = await channel.send(embed=embed, view=view)
