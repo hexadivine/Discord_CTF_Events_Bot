@@ -56,6 +56,7 @@ class JoinEventView(View):
     
             now_utc = datetime.now(timezone.utc)
             syd_start_datetime = utc_to_syd_time(self.event['start']) 
+            # syd_start_datetime = utc_to_syd_time('2025-04-08T00:00:00+00:00') 
             current_syd_time = utc_to_syd_time(now_utc.isoformat())
             delay_seconds = int((syd_start_datetime - current_syd_time).total_seconds()) - 60*60
 
@@ -63,11 +64,12 @@ class JoinEventView(View):
 
             if (delay_seconds > 0):
                 await asyncio.sleep(delay_seconds)
+                await interaction.response.send_message(f"<@{user.id}>: `{self.event['title'][2:]}` CTF will start soon...", ephemeral=True)
 
-                players = ""
-                for user in self.clicked_users:
-                    players += f"<@{user.id}>, "
-                await thread.send(f"{players[:-2]} CTF will start in 1 hour...", )
+                # players = ""
+                # for user in self.clicked_users:
+                #     players += f"<@{user.id}>, "
+                # await thread.send(f"{players[:-2]} CTF will start in 1 hour...", )
 
             await asyncio.sleep(10*24*60*60)
             del self
