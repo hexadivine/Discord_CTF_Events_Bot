@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  ctfbot:
+    build: .
+    restart: always
+    container_name: ctfbot
+    volumes:
+      - .:/app
