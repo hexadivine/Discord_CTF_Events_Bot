@@ -172,9 +172,9 @@ async def on_ready():
 #app = Flask(__name__)
 
 
-@app.route("/")
-def home():
-    return "Bot is running!"
+#@app.route("/")
+#def home():
+#    return "Bot is running!"
 
 
 #def run_flask():
